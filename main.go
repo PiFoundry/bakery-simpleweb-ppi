@@ -10,6 +10,7 @@ import (
 
 func main() {
 	logger := log.New(os.Stderr, "", 0)
+	var err error
 
 	var config ppiConfig
 	configBytes, err := ioutil.ReadFile("ppiConfig.json")
@@ -37,12 +38,22 @@ func main() {
 		panic(err)
 	}
 
+	pi, exists := config.PiList[params.PiId]
+	if !exists {
+		fmt.Printf("Pi with ID %v not in ppi ppiConfiguration.json", params.PiId)
+		return
+	}
+
 	switch action := params.Action; action {
 	case "poweron":
-		config.PiList[params.PiId].powerOn()
+		err = pi.powerOn()
 
 	case "poweroff":
-		config.PiList[params.PiId].powerOff()
+		err = pi.powerOff()
+	}
+
+	if err != nil {
+		logger.Fatal(err.Error())
 	}
 
 	fmt.Printf("ok")
