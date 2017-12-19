@@ -12,9 +12,9 @@ type ppiConfig struct {
 }
 
 type ppiNode struct {
-	PiId      string `json:"piId"`
-	ID        int    `json:"id"`
-	IpAddress string `json:"ipAddress"`
+	PiId string `json:"piId"`
+	ID   int    `json:"id"`
+	URL  string `json:"url"`
 }
 
 func (n ppiNode) powerOn() error {
@@ -22,7 +22,7 @@ func (n ppiNode) powerOn() error {
 		Timeout: time.Second * 10,
 	}
 
-	resp, err := client.Get(fmt.Sprintf("http://%v/poweron?id=%v", n.IpAddress, n.ID))
+	resp, err := client.Get(fmt.Sprintf("%v/poweron/%v", n.URL, n.ID))
 	if err != nil {
 		panic(err)
 	}
@@ -39,7 +39,7 @@ func (n ppiNode) powerOff() error {
 		Timeout: time.Second * 10,
 	}
 
-	resp, err := client.Get(fmt.Sprintf("http://%v/poweroff?id=%v", n.IpAddress, n.ID))
+	resp, err := client.Get(fmt.Sprintf("%v/poweroff/%v", n.URL, n.ID))
 	if err != nil {
 		panic(err)
 	}

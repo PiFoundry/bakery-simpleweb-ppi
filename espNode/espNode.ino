@@ -57,8 +57,10 @@ void relayOn(bool s) {
   }
 }
 
-void handlePowerOff() {  
-  if (server.argName(0) == "id" && server.arg(0) == "0") {     
+void handlePowerOff() {      
+  String uri = server.uri();
+  if (uri.charAt(uri.length()) == '0') {
+ // if (server.argName(0) == "id" && server.arg(0) == "0") {     
      state = false;
      stateChanged = true;
      server.send(200, "text/plain", "ok");      
@@ -68,7 +70,9 @@ void handlePowerOff() {
 }
 
 void handlePowerOn() {  
-  if (server.argName(0) == "id" && server.arg(0) == "0") {    
+  String uri = server.uri();
+  if (uri.charAt(uri.length()) == '0') {
+//  if (server.argName(0) == "id" && server.arg(0) == "0") {    
      state = true;
      stateChanged = true;
      server.send(200, "text/plain", "ok");      
