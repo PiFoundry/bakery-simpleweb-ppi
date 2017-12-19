@@ -57,5 +57,5 @@ void powerCommand(BridgeClient client, bool on) {
   int pi = client.parseInt();
   SerialUSB.println(pi);
   digitalWrite(piPins[pi], on);
-  client.println("ok");
+  client.print("ok");
 }

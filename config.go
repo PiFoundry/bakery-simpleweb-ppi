@@ -26,6 +26,7 @@ func (n ppiNode) powerOn() error {
 	if err != nil {
 		panic(err)
 	}
+
 	respBytes, _ := ioutil.ReadAll(resp.Body)
 	if string(respBytes) != "ok" {
 		return fmt.Errorf("response was not \"ok\"")
@@ -43,6 +44,7 @@ func (n ppiNode) powerOff() error {
 	if err != nil {
 		panic(err)
 	}
+
 	respBytes, _ := ioutil.ReadAll(resp.Body)
 	if string(respBytes) != "ok" {
 		return fmt.Errorf("response was not \"ok\"")
