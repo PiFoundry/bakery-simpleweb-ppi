@@ -42,6 +42,7 @@ void process(EthernetClient client) {
   boolean currentLineIsBlank = true;
   byte index = 0;
   char clientline[BUFSIZE];
+  boolean success = false;
   
   while (client.connected()) {
     if (client.available()) {
@@ -66,18 +67,22 @@ void process(EthernetClient client) {
         if (command != NULL && strcmp(method, "GET\n") && id >= 0 && id <= 5) {
           if (strcmp(command, "poweron") == 0 ) {
             digitalWrite(piPins[id], HIGH);            
-            client.println("HTTP/1.1 200 OK");
+            success = true;
           } else if (strcmp(command, "poweroff") == 0) {
             digitalWrite(piPins[id], LOW);                              
-            client.println("HTTP/1.1 200 OK");
+            success = true;
           }
         }
-        
-        client.println("HTTP/1.1 404 NotFound");
+
+        if (success) {
+          client.println("HTTP/1.1 200 OK");
+        } else {
+          client.println("HTTP/1.1 404 Not Found");
+        }
         client.println("Content-Type: text/plain");
         client.println("Connection: close");
         client.println();
-        client.println("ok");        
+        client.print("ok");   
         
         delay(1);
         client.stop();
