@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"time"
 )
@@ -24,7 +25,7 @@ func (n ppiNode) powerOn() error {
 
 	resp, err := client.Get(fmt.Sprintf("%v/poweron/%v", n.URL, n.ID))
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	respBytes, _ := ioutil.ReadAll(resp.Body)
@@ -42,7 +43,7 @@ func (n ppiNode) powerOff() error {
 
 	resp, err := client.Get(fmt.Sprintf("%v/poweroff/%v", n.URL, n.ID))
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	respBytes, _ := ioutil.ReadAll(resp.Body)
