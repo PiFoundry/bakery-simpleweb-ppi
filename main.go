@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -12,7 +13,10 @@ func main() {
 	var err error
 
 	var config ppiConfig
-	configBytes, err := ioutil.ReadFile("ppiConfig.json")
+	var configPath string
+	flag.StringVar(&configPath, "C", "ppiConfig.json", "Path to ppi config file in JSON format.")
+
+	configBytes, err := ioutil.ReadFile(configPath)
 	if err != nil {
 		log.Fatal(err)
 	}
