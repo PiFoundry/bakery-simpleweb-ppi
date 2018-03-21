@@ -4,6 +4,9 @@
 
 #define BUFSIZE 16
 
+#define resetPin 2
+#define checkRetries 1
+
 byte mac[] {
   0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
 };
@@ -13,24 +16,14 @@ EthernetServer server(80);
 
 byte piPins[] = {3, 5, 8, 9};
 byte resetState;
-
-void(* resetFunc) (void) = 0;
+IPAddress checkServer(192, 168, 192, 1);
+int checkPort = 80;
+unsigned long checkInterval = 3000;
 
 void setup() {
-  pinMode(13, OUTPUT);
-  digitalWrite(13, LOW);
-
-  delay(1000); //give ethernet shield time to come out of reset state
-   
-  resetState = EEPROM.read(0);
-  
-  if (resetState == 0) {
-    EEPROM.write(0, 1);    
-    resetFunc();
-  }
-
-  EEPROM.write(0, 0);
-
+  digitalWrite(resetPin, HIGH);
+  pinMode(resetPin, OUTPUT);
+    
   for (byte i = 0; i <= 3; i++) {
     pinMode(piPins[i], OUTPUT);
     digitalWrite(piPins[i], LOW);
@@ -38,20 +31,49 @@ void setup() {
 
   Serial.begin(9600);
 
+  delay(1500); //give ethernet shield time to come out of reset state and for my crappy PSU to stabelize
+
   Ethernet.begin(mac, ip);
+  
+  delay(1000); //give ethernet shield time to initialize
+  
   server.begin();
   Serial.print("IP Address: ");
   Serial.println(Ethernet.localIP());
 
-  digitalWrite(13, HIGH);
 }
 
-void loop() {
-  EthernetClient client = server.available();
+void loop() {  
+  static unsigned long lastCheck = 0;
+  static byte retries = checkRetries;
+  
+  int checkResult;
 
+  EthernetClient client = server.available();  
   if (client) {
+    Serial.println("client connected");
     process(client);
   }
+      
+/*  if (millis() - lastCheck >= checkInterval) {
+    Serial.println("checking if I'm connected");
+
+    EthernetClient checkClient;
+    checkResult = checkClient.connect(checkServer, checkPort);
+    lastCheck = millis();
+    
+    if (checkResult != 1) {
+      Serial.println("Health check failed");
+      if (retries == 0) {
+        Serial.println("Resetting.");
+        Serial.flush();
+        digitalWrite(resetPin, LOW);
+      }
+      retries--;
+    } else {
+      retries = checkRetries;           
+    }
+  }*/
 }
 
 void process(EthernetClient client) {
