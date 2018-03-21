@@ -14,7 +14,8 @@ func main() {
 
 	var config ppiConfig
 	var configPath string
-	flag.StringVar(&configPath, "C", "/var/vcap/jobs/ppi/config/ppiConfig.json", "Path to ppi config file in JSON format.")
+	flag.StringVar(&configPath, "c", "/var/vcap/jobs/ppi/config/ppiConfig.json", "Path to ppi config file in JSON format.")
+	flag.Parse()
 
 	configBytes, err := ioutil.ReadFile(configPath)
 	if err != nil {
